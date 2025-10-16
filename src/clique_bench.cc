@@ -21,7 +21,7 @@
 namespace fs = std::filesystem;
 
 std::string run_clique(unsigned n, unsigned W, unsigned seed_val) {
-  auto sizes = gen_random_sizes<uint64_t>(n, W, 1, W, seed_val);
+  auto sizes = gen_random_sizes<double>(n, W, 1, W, seed_val);
 
   std::vector<std::pair<unsigned, unsigned>> joins;
   for (unsigned i = 0; i != n; ++i) {

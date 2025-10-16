@@ -49,7 +49,8 @@ public:
 // TODO: use unique_ptrs.
 class JoinNode {
 public:
-  JoinNode(uint64_t set, uint64_t size, std::shared_ptr<JoinNode> left, std::shared_ptr<JoinNode> right)
+  template <typename U>
+  JoinNode(uint64_t set, U size, std::shared_ptr<JoinNode> left, std::shared_ptr<JoinNode> right)
   : set(set), size(size), left(left), right(right) {}
   
   bool operator == (const JoinNode&& other) const {
@@ -67,7 +68,8 @@ public:
   std::shared_ptr<JoinNode> left, right;
   uint64_t size;
 
-  void debug(std::string filename, std::vector<std::string>& tns, const std::vector<uint64_t>& sizes, std::string extra) {
+  template <typename U>
+  void debug(std::string filename, std::vector<std::string>& tns, const std::vector<U>& sizes, std::string extra) {
     // Take the actual filename from `filename` and put `extra` as the file extension.
     fs::path filePath(filename);
     std::string fileNameOnly = filePath.stem().string(); // Get only the filename
@@ -93,7 +95,8 @@ private:
     return static_cast<unsigned>(std::log2(set));
   }
 
-  std::pair<std::vector<std::string>, std::string> rec_debug(std::vector<std::string>& tns, const std::vector<uint64_t>& sizes) {
+  template <typename U>
+  std::pair<std::vector<std::string>, std::string> rec_debug(std::vector<std::string>& tns, const std::vector<U>& sizes) {
     if (this->is_single()) {
       std::vector<std::string> tmp;
       auto ret = "(" + tns[this->extract_bit()] + ")";
@@ -126,7 +129,7 @@ private:
 };
 
 template <typename U>
-static std::shared_ptr<JoinNode> extractJoinTreeSpecialDP(std::vector<U>& dp, const std::vector<uint64_t>& sizes) {
+static std::shared_ptr<JoinNode> extractJoinTreeSpecialDP(std::vector<U>& dp, const std::vector<U>& sizes) {
   // Find the optimal split of set `S`.
   auto findOptSplit = [&](uint64_t S) {
     // TODO: Improvement: avoid symmetric cases.
@@ -160,7 +163,7 @@ static std::shared_ptr<JoinNode> extractJoinTreeSpecialDP(std::vector<U>& dp, co
 }
 
 template <typename U>
-static std::shared_ptr<JoinNode> extractJoinTreeMinMax(std::vector<U>& dp, const std::vector<uint64_t>& sizes) {
+static std::shared_ptr<JoinNode> extractJoinTreeMinMax(std::vector<U>& dp, const std::vector<U>& sizes) {
   // Find the optimal split of set `S`.
   auto findOptSplit = [&](uint64_t S) {
     // TODO: Improvement: avoid symmetric cases.
@@ -170,7 +173,7 @@ static std::shared_ptr<JoinNode> extractJoinTreeMinMax(std::vector<U>& dp, const
     uint64_t T = 0;
     do {
       if ((T) && (T != S)) {
-        if (dp[S] == std::max(sizes[S], static_cast<uint64_t>(std::max(dp[T], dp[S ^ T])))) {
+        if (dp[S] == std::max(sizes[S], static_cast<U>(std::max(dp[T], dp[S ^ T])))) {
           return T;
         }
       }
@@ -235,7 +238,7 @@ static std::shared_ptr<JoinNode> extractJoinTreeHash(std::vector<U>& dp, const s
 }
 
 template <typename U>
-static std::shared_ptr<JoinNode> extractJoinTreeMinPlus(std::vector<U>& dp, const std::vector<uint64_t>& sizes) {
+static std::shared_ptr<JoinNode> extractJoinTreeMinPlus(std::vector<U>& dp, const std::vector<U>& sizes) {
   // Find the optimal split of set `S`.
   auto findOptSplit = [&](uint64_t S) {
     // TODO: Improvement: avoid symmetric cases.

@@ -222,7 +222,7 @@ private:
 #define STORE_SHIFT(e, S) (S - ((1ULL << e) - 1)) 
 
 class BooleanFSC {
-  using data_type_t = uint32_t;
+  using data_type_t = double;
   using supp_t = std::vector<data_type_t>;
 public:
   // An auxiliary array.
@@ -346,7 +346,7 @@ private:
 };
 
 class BoostedBooleanFSC {
-  using data_type_t = uint32_t;
+  using data_type_t = double;
   using supp_t = std::vector<data_type_t>;
 public:
   // An auxiliary array.

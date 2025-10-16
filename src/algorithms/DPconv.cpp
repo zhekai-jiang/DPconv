@@ -43,12 +43,12 @@ static std::pair<U, std::shared_ptr<JoinNode>> runMinMaxDPconv_instant(const std
     if (scalar_sizes[perm[index]] == full_card) {
       pos_of_full_card = std::min(pos_of_full_card, index);
     }
-    if (scalar_sizes[perm[index]] == std::numeric_limits<uint64_t>::max()) {
+    if (scalar_sizes[perm[index]] == std::numeric_limits<U>::max()) {
       start_pos = std::max(start_pos, index);
     }
   }
 
-  std::vector<uint32_t> dp(N);
+  std::vector<U> dp(N);
   for (unsigned index = 0; index != n; ++index)
     dp[1ull << index] = 1;
 

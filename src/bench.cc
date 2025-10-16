@@ -18,7 +18,7 @@
 
 namespace fs = std::filesystem;
 
-std::tuple<MetaInfo, std::string> run_query_from_file(std::string filename, bool analyzeRatios = false) {
+std::tuple<MetaInfo, std::string> run_query_from_file(std::string filename, bool analyzeRatios = false, bool capped = true) {
   assert(endswith(filename, ".csv"));
   std::cerr << "[start] " << filename << std::endl;
   std::ifstream in(filename);
@@ -34,22 +34,22 @@ std::tuple<MetaInfo, std::string> run_query_from_file(std::string filename, bool
   for (unsigned index = 0; index != m; ++index) {
     in >> edges[index].first >> edges[index].second;
   }
-  std::vector<uint64_t> sizes(1u << n, std::numeric_limits<uint64_t>::max());
+  std::vector<double> sizes(1u << n, std::numeric_limits<double>::max());
 
-  uint64_t maxCard = 0;
+  double maxCard = 0;
   while (s--) {
     uint64_t bitset;
     double card;
     in >> bitset >> card;
-    sizes[bitset] = static_cast<uint64_t>(card);
+    sizes[bitset] = static_cast<double>(card);
   }
 
   QueryGraph qg(n, edges);
 
-  return optimize_query(filename, n, qg, sizes, tns, analyzeRatios);
+  return optimize_query(filename, n, qg, sizes, tns, analyzeRatios, capped);
 }
 
-std::vector<std::tuple<std::string, MetaInfo>> benchmark_directory_or_file(std::string dir_or_file, unsigned limit, bool analyzeRatios = false) {
+std::vector<std::tuple<std::string, MetaInfo>> benchmark_directory_or_file(std::string dir_or_file, bool capped, unsigned limit, bool analyzeRatios = false) {
   // Collect the files to be benchmarked.
   std::vector<std::string> fns;
   if (fs::is_directory(dir_or_file)) {
@@ -68,27 +68,30 @@ std::vector<std::tuple<std::string, MetaInfo>> benchmark_directory_or_file(std::
   std::vector<std::string> collector(numTasks);
   std::vector<std::tuple<std::string, MetaInfo>> ratios;
   for (unsigned index = 0; index != numTasks; ++index) {
-    auto [meta_info, actual_ret] = run_query_from_file(fns[index], analyzeRatios);
+    auto [meta_info, actual_ret] = run_query_from_file(fns[index], analyzeRatios, capped);
     ratios.push_back({fns[index], meta_info});
     collector[index] = actual_ret;
   }
 
-  flush("dpconv", collector);
   return ratios;
 }
 
 int main(int argc, char** argv) {
-  if ((argc != 2) && (argc != 3)) {
-    std::cerr << "Usage: " << argv[0] << " <input:{directory, file}> [<limit:int>]" << std::endl;
+  if ((argc < 2) || (argc > 4)) {
+    std::cerr << "Usage: " << argv[0] << " <input:{directory, file}> [capped:{0, 1}] [<limit:int>]" << std::endl;
     exit(-1);
   }
 
   auto dir_or_file = std::string(argv[1]);
   std::cerr << "Benchmark " << dir_or_file << std::endl;
+  bool capped = true;
+  if (argc >= 3) {
+    capped = (std::string(argv[2]) == "1");
+  }
   unsigned limit = std::numeric_limits<unsigned>::max();
-  if (argc == 3) limit = std::stoi(argv[2]);
+  if (argc == 4) limit = std::stoi(argv[3]);
 
-  auto ratios = benchmark_directory_or_file(dir_or_file, limit, true);
+  auto ratios = benchmark_directory_or_file(dir_or_file, capped, limit, true);
 
   std::ofstream out("../cout_cmax_ratios.csv");
   assert(out.is_open());

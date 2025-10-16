@@ -36,7 +36,8 @@ public:
     return n_;
   }
 
-  void dump(const std::vector<uint64_t>& sizes, uint64_t W, std::size_t seed_val) {
+  template <typename U>
+  void dump(const std::vector<U>& sizes, uint64_t W, std::size_t seed_val) {
     // For debug purposes.
 #if 0
     system("mkdir -p ../used-cliques");

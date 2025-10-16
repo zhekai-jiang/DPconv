@@ -70,7 +70,7 @@ private:
   const std::vector<U>& scalarSizes_;
   BitSet64 leftPlan;
   U capped_size_;
-  std::vector<uint64_t> dp;
+  std::vector<U> dp;
 
   void dpCcpEmit2(BitSet64 rightProblem)
   // Emit a connected complement component.
@@ -162,7 +162,7 @@ private:
     auto l_cost = dp[l.to_uint64_t()];
     auto r_cost = dp[r.to_uint64_t()];
 
-    uint64_t currCost = 0;
+    U currCost = 0;
     if (type_ == OptimizationType::MinPlus) {
       currCost = join_size + l_cost + r_cost;
     } else if (type_ == OptimizationType::MinMax) {
