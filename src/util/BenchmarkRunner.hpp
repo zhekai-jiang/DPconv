@@ -61,7 +61,7 @@ std::tuple<MetaInfo, std::string> optimize_query(
     std::cerr << "CCAP_DPCONV (time): " << std::chrono::duration_cast<std::chrono::microseconds>(time11 - time10).count() << std::endl;
     // ------------------------------------------------- //
 
-    join_tree10->debug(fn, tns, sizes, "ccap_opt");
+    join_tree10->debug(fn, tns, "ccap_opt");
 
   } else {
     auto time13 = std::chrono::high_resolution_clock::now();
@@ -81,7 +81,7 @@ std::tuple<MetaInfo, std::string> optimize_query(
     auto minplus_dpccp_time = std::chrono::duration_cast<std::chrono::microseconds>(time14 - time13).count();
     // -------------------------------------------------
 
-    join_tree13->debug(fn, tns, sizes, "cout_opt");
+    join_tree13->debug(fn, tns, "cout_opt");
   }
 
   auto ret = fn + ","

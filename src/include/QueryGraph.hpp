@@ -36,6 +36,10 @@ public:
     return n_;
   }
 
+  const std::vector<std::pair<unsigned, unsigned>> &get_joins() const {
+    return joins_;
+  }
+
   template <typename U>
   void dump(const std::vector<U>& sizes, uint64_t W, std::size_t seed_val) {
     // For debug purposes.

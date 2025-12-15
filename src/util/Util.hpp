@@ -68,8 +68,7 @@ public:
   std::shared_ptr<JoinNode> left, right;
   uint64_t size;
 
-  template <typename U>
-  void debug(std::string filename, std::vector<std::string>& tns, const std::vector<U>& sizes, std::string extra) {
+  void debug(std::string filename, std::vector<std::string>& tns, std::string extra) {
     // Take the actual filename from `filename` and put `extra` as the file extension.
     fs::path filePath(filename);
     std::string fileNameOnly = filePath.stem().string(); // Get only the filename
@@ -80,7 +79,7 @@ public:
     std::cerr << extra << std::endl;
 
     std::ofstream out(fileNameFull);
-    auto [vec_str, _] = this->rec_debug(tns, sizes);
+    auto [vec_str, _] = this->rec_debug(tns);
     for (auto elem : vec_str)
       out << elem << std::endl;
     out.close();
@@ -95,15 +94,14 @@ private:
     return static_cast<unsigned>(std::log2(set));
   }
 
-  template <typename U>
-  std::pair<std::vector<std::string>, std::string> rec_debug(std::vector<std::string>& tns, const std::vector<U>& sizes) {
+  std::pair<std::vector<std::string>, std::string> rec_debug(std::vector<std::string>& tns) {
     if (this->is_single()) {
       std::vector<std::string> tmp;
       auto ret = "(" + tns[this->extract_bit()] + ")";
       return {tmp, ret};
     }
-    auto [l_vec, l] = left->rec_debug(tns, sizes);
-    auto [r_vec, r] = right->rec_debug(tns, sizes);
+    auto [l_vec, l] = left->rec_debug(tns);
+    auto [r_vec, r] = right->rec_debug(tns);
     l_vec.insert(l_vec.end(), r_vec.begin(), r_vec.end());
 #if 0
     if (left->size >= right->size) {

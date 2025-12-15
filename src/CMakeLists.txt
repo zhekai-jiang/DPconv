@@ -22,6 +22,7 @@ file(GLOB INCLUDE_FILES
   "include/Common.hpp"
   "include/SubsetConvolution.hpp"
   "util/BenchmarkRunner.hpp"
+  "util/UnionDPRunner.hpp"
 )
 
 file(GLOB THIRD_PARTY_FILES
@@ -42,3 +43,5 @@ file(GLOB ALL_FILES ${INCLUDE_FILES} ${ALGORITHM_FILES} ${TYPE_FILES})
 add_executable(bench ${ALL_FILES} bench.cc)
 
 add_executable(clique_bench ${ALL_FILES} clique_bench.cc)
+
+add_executable(union_bench ${ALL_FILES} union_bench.cc)
